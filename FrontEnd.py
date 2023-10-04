@@ -1,13 +1,14 @@
 import os
-from Tabuleiro import startTabuleiro
+import Tabuleiro
 
 #Escopo de variáveis globais
 Run = 0
 
+
 # Função para habilitar o menu principal
 def menuPrincipal():
     os.system('cls')
-    print('***** Batalha Naval *****')
+    print('⚓⚓⚓  Batalha Naval ⚓⚓⚓')
     print()
     print('1 - Jogar')
     print('2 - Ver Melhores Pontuações')
@@ -44,30 +45,65 @@ def validar_posicao(posicao):
     if posicao[1] not in '123456':
         return False
     #Se for válido a função retorna valor verdadeiro
-    print('TRUUUUUUE')
     return True
 
 
 
 # Função para a opção "Jogar"
 def jogar():
+
+    # PREPARAÇÃO DO TABULEIRO PARA INÍCIO DO JOGO
+    Navios = Tabuleiro.criarPosicaoNavios()
+    Submarinos = Tabuleiro.criarPosicaoSubmarinos()
+    Tabuleiro.reinicializarTabuleiro()
     
+    print(Navios)
+    print(Submarinos)
+    jogadas = 0
+    navios_afundados = 0
+    submarinos_afundados = 0
+    posicoes_jogadas = []  # Lista para rastrear as posições já jogadas
 
-    tabuleiro= startTabuleiro()
-    tabuleiro.imprimir_tabuleiro()
+    while True:
+        os.system('cls')
+        Tabuleiro.imprimirTabuleiro()
+        print(' ')
+        print(f'Jogadas até agora: {jogadas}')
+        print(f'Afundados até agora = Navios {navios_afundados} de 5 | Submarinos {submarinos_afundados} de 3')
+        print('Digite a posição para tentar (formato linha coluna)')
+        posicao = input(' Se quiser desistir digite -1: ').upper()
+        print('')
+        
 
-    print() #linha em branco
-    print('Jogadas até agora: 0')
-    print('Afundados até agora = Navios 0 de 5 | Submarino 0 de 3')
-    print('Digite a posição para tentar (formato linha coluna)')
-    posicao = input(' Se quiser desistir digite -1:')
-    if posicao=='-1':
-        print('PEDE PRA SAIR')
-    else:    
-        validar_posicao(posicao)
+        if posicao == '-1':
+            print('Você desistiu!')
+            break
 
+        if validar_posicao(posicao):
+            # Verifique se a posição já foi jogada
+            if posicao in posicoes_jogadas:
+                print('Essa posição já foi jogada. Tente outra.')
+                continue #Vai pra proxima interacao do loop
+            posicoes_jogadas.append(posicao)  # Adicione a posição à lista de posições jogadas
 
-    
+            jogadas += 1
+
+            if Tabuleiro.verificarAfundamentoNavios(posicao, Navios):
+                print(f'A posição {posicao} atingiu um navio!')
+                Tabuleiro.atualizarNavio(posicao)
+                navios_afundados += 1
+            elif Tabuleiro.verificarAfundamentoSubmarino(posicao, Submarinos):
+                    print(f'A posição {posicao} atingiu um Submarino!')
+                    Tabuleiro.atualizarSubmarino(posicao)
+                    submarinos_afundados += 1
+            else:
+                Tabuleiro.atualizarAgua(posicao)
+        
+        if navios_afundados == 5 and submarinos_afundados == 3:
+            print('Parabéns, você venceu o jogo!')
+            break
+        print('')    
+
 
 # Função para a opção "Ver Melhores Pontuações"
 def verMelhoresPontuacoes():
@@ -90,5 +126,5 @@ menuPrincipal()
 
 
 
-#Continuar, ao digitar linha e coluna preciso marcar no gabarito oque ocorreu.
+#Continuar, Verificar porque os submarinos estao contando como acerto mesmo quando acerta apenas 1 parte dele.
 

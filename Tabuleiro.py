@@ -1,28 +1,134 @@
-class startTabuleiro():
-        def __init__(self):
-            self.tabuleiro = {
-                'A1': ' ', 'A2': ' ', 'A3': ' ', 'A4': ' ', 'A5': ' ', 'A6': ' ',
-                'B1': ' ', 'B2': ' ', 'B3': ' ', 'B4': ' ', 'B5': ' ', 'B6': ' ',
-                'C1': ' ', 'C2': ' ', 'C3': ' ', 'C4': ' ', 'C5': ' ', 'C6': ' ',
-                'D1': ' ', 'D2': ' ', 'D3': ' ', 'D4': ' ', 'D5': ' ', 'D6': ' ',
-                'E1': ' ', 'E2': ' ', 'E3': ' ', 'E4': ' ', 'E5': ' ', 'E6': ' ',
-                'F1': ' ', 'F2': ' ', 'F3': ' ', 'F4': ' ', 'F5': ' ', 'F6': ' ',
+import random
+
+# 0 = '\u25A0' => Não explorado
+# 1 = '_'      => Água
+# 2 = 'x'      => Afundado
+# 3 = '\u2316'  => Parcial
+
+#Incia o tabuleiro com 0 em todas as posições
+tabuleiro = {
+                'A1': '0', 'A2': '0', 'A3': '0', 'A4': '0', 'A5': '0', 'A6': '0',
+                'B1': '0', 'B2': '0', 'B3': '0', 'B4': '0', 'B5': '0', 'B6': '0',
+                'C1': '0', 'C2': '0', 'C3': '0', 'C4': '0', 'C5': '0', 'C6': '0',
+                'D1': '0', 'D2': '0', 'D3': '0', 'D4': '0', 'D5': '0', 'D6': '0',
+                'E1': '0', 'E2': '0', 'E3': '0', 'E4': '0', 'E5': '0', 'E6': '0',
+                'F1': '0', 'F2': '0', 'F3': '0', 'F4': '0', 'F5': '0', 'F6': '0',
             }
 
-        def imprimir_tabuleiro(self):
-            #Cabeçalho numérico alinhado conforme as demais colunas
-            print('    1 2 3 4 5 6')
-            #For Incrementa as letras correspondentes para as linhas, valores são usados os que foram declarados no tabuleiro
-            for linha in 'ABCDEF':
-                print(linha,'|', end=' ')
-                for coluna in range(1, 7):
-                    #print(startTabuleiro.tabuleiro[linha + str(coluna)], end=' ')
-                    print('\u25A0', end=' ')
-                print()
 
+def criarPosicaoNavios():
+    listaNavios = []
+    navios_colocados = 0
+    while navios_colocados < 5:
+        linha = random.choice('ABCDEF')
+        coluna = str(random.randint(1,6))
+        posicao = linha+coluna
+        #Verifica se a posição ja esta ocupada
+        if tabuleiro[posicao] == '0':
+            tabuleiro[posicao] = '1'
+            listaNavios.append(posicao) #Adiciona a posicao que foi escolhida aleatoriamente na ultima posicao da lista
+            navios_colocados += 1
+    return listaNavios
 
-
-
+def criarPosicaoSubmarinos():
+    listaSubmarinos = []
+    submarinos_colocados = 0
+    while submarinos_colocados < 3:  # Posicionar 3 submarinos
+        # Escolha aleatoriamente a orientação (horizontal ou vertical)
+        orientacao = random.choice(['horizontal', 'vertical'])
         
+        if orientacao == 'horizontal':
+            # Escolha aleatoriamente uma linha e uma coluna inicial
+            linha = random.choice('ABCDEF')
+            coluna = random.randint(1, 5)  # Certifique-se de que haja espaço suficiente para o submarino
+            
+            # Verifique se as posições adjacentes estão livres
+            posicao1 = linha + str(coluna)
+            posicao2 = linha + str(coluna + 1)
+            if tabuleiro[posicao1] == '0' and tabuleiro[posicao2] == '0':
+                # Marque as posições como ocupadas e adicione à lista de submarinos
+                tabuleiro[posicao1] = '1'
+                tabuleiro[posicao2] = '1'
+                listaSubmarinos.append([posicao1, posicao2])
+                submarinos_colocados += 1
+        else:
+            # Escolha aleatoriamente uma linha inicial e uma coluna
+            linha = random.choice('ABCDE')
+            coluna = random.randint(1, 6)
+            
+            # Verifique se as posições adjacentes estão livres
+            posicao1 = linha + str(coluna)
+            posicao2 = chr(ord(linha) + 1) + str(coluna)
+            if tabuleiro[posicao1] == '0' and tabuleiro[posicao2] == '0':
+                # Marque as posições como ocupadas e adicione à lista de submarinos
+                tabuleiro[posicao1] = '1'
+                tabuleiro[posicao2] = '1'                
+                listaSubmarinos.append([posicao1, posicao2])
+                submarinos_colocados += 1
+    return listaSubmarinos
+
+
+def atualizarNavio(posicao):
+     # Atualize a posição no tabuleiro para indicar que foi atingida
+    tabuleiro[posicao] = '2' 
+
+def atualizarSubmarino(posicao):
+     # Atualize a posição no tabuleiro para indicar que foi atingida
+    tabuleiro[posicao] = '3' 
+
+def atualizarAgua(posicao):
+     # Atualize a posição no tabuleiro para indicar que não foi
+    tabuleiro[posicao] = '1'  
+
+def imprimirTabuleiro():
+    #Cabeçalho numérico alinhado conforme as demais colunas
+    print('    1 2 3 4 5 6')
+    #For Incrementa as letras correspondentes para as linhas, valores são usados os que foram declarados no tabuleiro
+    for L in 'ABCDEF':
+        print(L,'|', end=' ')
+        for C in range(1, 7):
+            posicao = L + str(C)
+
+            #Verifica qual simbolo deve utilizar para imprimir o tabuleiro
+            if tabuleiro[posicao] == '0':
+                print('\u25A0',end=' ')
+            elif tabuleiro[posicao] == '1':
+                print('_',end=' ')
+            elif tabuleiro[posicao] == '2':
+                print('x',end=' ')
+            elif tabuleiro[posicao] == '3':
+               print('\u2316',end=' ')
+        print()
+
+# Função para reinicializar o tabuleiro com todos os valores igual a '0'
+def reinicializarTabuleiro():
+    for posicao in tabuleiro:
+        tabuleiro[posicao] = '0'
+
+
+def verificarAfundamentoNavios(posicao, listaNavios):
+    if posicao in listaNavios:
+        listaNavios.remove(posicao)  # Remove a posição da lista de navios afundados
+        return True
+    return False
+
+
+def verificarAfundamentoSubmarino(posicao, listaSubmarinos):
+    for submarino in listaSubmarinos:
+        if posicao in submarino:
+            submarino.remove(posicao)  # Remove a posição da lista do submarino
+            if len(submarino) == 0:
+                listaSubmarinos.remove(submarino)  # Remove o submarino da lista se estiver completamente afundado
+            return True
+    return False
+
+
+
+
+
+    
+
+
+
 
         
