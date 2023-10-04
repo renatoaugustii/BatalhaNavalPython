@@ -1,5 +1,5 @@
 import os
-import Tabuleiro
+import Tabuleiro, Persistencia
 
 #Escopo de variáveis globais
 Run = 0
@@ -7,7 +7,6 @@ Run = 0
 
 # Função para habilitar o menu principal
 def menuPrincipal():
-    os.system('cls')
     print('⚓⚓⚓  Batalha Naval ⚓⚓⚓')
     print()
     print('1 - Jogar')
@@ -49,23 +48,20 @@ def validar_posicao(posicao):
 
 
 
-# Função para a opção "Jogar"
 def jogar():
-
-    # PREPARAÇÃO DO TABULEIRO PARA INÍCIO DO JOGO
+    # PREPARAÇÃO DO TABULEIRO PARA O INÍCIO DO JOGO
     Navios = Tabuleiro.criarPosicaoNavios()
     Submarinos = Tabuleiro.criarPosicaoSubmarinos()
     Tabuleiro.reinicializarTabuleiro()
     
-    print(Navios)
-    print(Submarinos)
     jogadas = 0
     navios_afundados = 0
     submarinos_afundados = 0
     posicoes_jogadas = []  # Lista para rastrear as posições já jogadas
 
+    os.system('pause')
     while True:
-        os.system('cls')
+        #os.system('cls')
         Tabuleiro.imprimirTabuleiro()
         print(' ')
         print(f'Jogadas até agora: {jogadas}')
@@ -74,7 +70,6 @@ def jogar():
         posicao = input(' Se quiser desistir digite -1: ').upper()
         print('')
         
-
         if posicao == '-1':
             print('Você desistiu!')
             break
@@ -83,31 +78,43 @@ def jogar():
             # Verifique se a posição já foi jogada
             if posicao in posicoes_jogadas:
                 print('Essa posição já foi jogada. Tente outra.')
-                continue #Vai pra proxima interacao do loop
+                continue  # Vai para a próxima iteração do loop
+
             posicoes_jogadas.append(posicao)  # Adicione a posição à lista de posições jogadas
 
             jogadas += 1
 
+            afundamento_submarino = Tabuleiro.verificarAfundamentoSubmarino(posicao, Submarinos)
+            
             if Tabuleiro.verificarAfundamentoNavios(posicao, Navios):
                 print(f'A posição {posicao} atingiu um navio!')
                 Tabuleiro.atualizarNavio(posicao)
                 navios_afundados += 1
-            elif Tabuleiro.verificarAfundamentoSubmarino(posicao, Submarinos):
-                    print(f'A posição {posicao} atingiu um Submarino!')
-                    Tabuleiro.atualizarSubmarino(posicao)
-                    submarinos_afundados += 1
+            elif afundamento_submarino == 2:
+                print(f'A posição {posicao} atingiu um Submarino completamente!')
+                Tabuleiro.atualizarSubmarino(posicao)
+                submarinos_afundados += 1
+            elif afundamento_submarino == 1:
+                print(f'A posição {posicao} atingiu um Submarino parcialmente!')
+                Tabuleiro.atualizarSubmarino(posicao)
             else:
                 Tabuleiro.atualizarAgua(posicao)
         
+        # Verifique a vitória após cada jogada
         if navios_afundados == 5 and submarinos_afundados == 3:
-            print('Parabéns, você venceu o jogo!')
+            print('✨✨✨ VOCÊ GANHOU!!! ✨✨✨')
+            nome = input('Qual seu nome?')
+            Persistencia.ScoreRankear(nome, jogadas)
             break
-        print('')    
+        print('')
+
 
 
 # Função para a opção "Ver Melhores Pontuações"
 def verMelhoresPontuacoes():
-    print('Você escolheu ver as melhores pontuações!')
+    Persistencia.exibirRanking()
+    print(' ')
+    menuPrincipal()
     # Coloque aqui o código para exibir as melhores pontuações
 
 # Função para a opção "Sair"
@@ -118,13 +125,8 @@ def sair():
     os.system('cls')
     print('Você saiu do jogo!')
     
-
-
-
 #Variável Run será utilizada como flag de indicaçao que o game deverá estar rodando. Caso seja digitado o valor de -1, o programa será encerrado.
 menuPrincipal()
-
-
 
 #Continuar, Verificar porque os submarinos estao contando como acerto mesmo quando acerta apenas 1 parte dele.
 

@@ -49,7 +49,8 @@ def criarPosicaoSubmarinos():
                 # Marque as posições como ocupadas e adicione à lista de submarinos
                 tabuleiro[posicao1] = '1'
                 tabuleiro[posicao2] = '1'
-                listaSubmarinos.append([posicao1, posicao2])
+                submarino = [posicao1, posicao2]
+                listaSubmarinos.append(submarino)
                 submarinos_colocados += 1
         else:
             # Escolha aleatoriamente uma linha inicial e uma coluna
@@ -62,8 +63,9 @@ def criarPosicaoSubmarinos():
             if tabuleiro[posicao1] == '0' and tabuleiro[posicao2] == '0':
                 # Marque as posições como ocupadas e adicione à lista de submarinos
                 tabuleiro[posicao1] = '1'
-                tabuleiro[posicao2] = '1'                
-                listaSubmarinos.append([posicao1, posicao2])
+                tabuleiro[posicao2] = '1'
+                submarino = [posicao1, posicao2]
+                listaSubmarinos.append(submarino)
                 submarinos_colocados += 1
     return listaSubmarinos
 
@@ -73,8 +75,19 @@ def atualizarNavio(posicao):
     tabuleiro[posicao] = '2' 
 
 def atualizarSubmarino(posicao):
-     # Atualize a posição no tabuleiro para indicar que foi atingida
-    tabuleiro[posicao] = '3' 
+    # Esta função atualiza o tabuleiro quando um submarino é atingido parcialmente
+    if posicao in tabuleiro:
+        # Verifique se a outra parte do submarino já foi atingida
+        outras_posicoes = [p for p in tabuleiro if tabuleiro[p] == '3']
+        for outra_posicao in outras_posicoes:
+            if abs(ord(outra_posicao[0]) - ord(posicao[0])) + abs(int(outra_posicao[1]) - int(posicao[1])) == 1:
+                # A outra parte do submarino foi atingida, atualize as duas posições para '2'
+                tabuleiro[outra_posicao] = '2'
+                tabuleiro[posicao] = '2'
+                return
+        # Se não, atualize apenas a posição atual para indicar que foi atingida parcialmente
+        tabuleiro[posicao] = '3'  # Use o Unicode '\u2316' para indicar um submarino atingido parcialmente
+
 
 def atualizarAgua(posicao):
      # Atualize a posição no tabuleiro para indicar que não foi
@@ -119,8 +132,10 @@ def verificarAfundamentoSubmarino(posicao, listaSubmarinos):
             submarino.remove(posicao)  # Remove a posição da lista do submarino
             if len(submarino) == 0:
                 listaSubmarinos.remove(submarino)  # Remove o submarino da lista se estiver completamente afundado
-            return True
-    return False
+                return 2  # Retorna True para indicar que um submarino foi completamente afundado
+            return 1  # Retorna True para indicar que um submarino foi atingido parcialmente
+    return False  # Retorna False para indicar que nenhum submarino foi atingido nesta posição
+
 
 
 

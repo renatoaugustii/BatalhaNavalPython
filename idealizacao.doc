@@ -1,0 +1,61 @@
+
+### Arquivo FrontEnd.py
+
+O arquivo FrontEnd.py é responsável por lidar com a interface do jogo e a interação com o usuário. Ele contém as seguintes funções:
+
+1. menuPrincipal(): Exibe o menu principal do jogo e permite ao jogador escolher entre as opções de jogar, ver melhores pontuações e sair.
+
+2. validar_posicao(posicao): Verifica se a posição fornecida pelo jogador é válida, ou seja, tem o formato correto.
+
+3. jogar(): Função principal do jogo. Prepara o tabuleiro, inicia o loop do jogo e permite que o jogador faça jogadas. Verifica o afundamento de navios e submarinos, atualiza o tabuleiro e verifica as condições de vitória.
+
+4. verMelhoresPontuacoes(): Exibe as melhores pontuações do jogo, obtidas a partir do arquivo ranking.txt.
+
+5. sair(): Permite que o jogador saia do jogo.
+
+
+
+### Arquivo Tabuleiro.py
+
+O arquivo Tabuleiro.py contém classes e funções relacionadas ao tabuleiro do jogo:
+
+1. reinicializarTabuleiro(): Reinicializa o tabuleiro com configurações padrão.
+
+2. criarPosicaoNavios(): Gera aleatoriamente as posições dos navios no tabuleiro.
+
+3. criarPosicaoSubmarinos(): Gera aleatoriamente as posições dos submarinos no tabuleiro.
+
+4. imprimirTabuleiro(): Exibe o tabuleiro atual na tela.
+
+5. verificarAfundamentoNavios(posicao, listaNavios): Verifica se a posição fornecida corresponde ao afundamento de um navio e atualiza o tabuleiro, retornando True se for um afundamento.
+
+6. verificarAfundamentoSubmarino(posicao, listaSubmarinos): Verifica se a posição fornecida corresponde ao afundamento de um submarino, atualizando o tabuleiro e retornando True se for um afundamento.
+
+7. atualizarNavio(posicao): Atualiza o tabuleiro para indicar que um navio foi atingido.
+
+8. atualizarSubmarino(posicao): Atualiza o tabuleiro para indicar que um submarino foi atingido completamente.
+
+9. atualizarSubmarinoParcial(posicao): Atualiza o tabuleiro para indicar que um submarino foi atingido parcialmente.
+
+10. atualizarAgua(posicao): Atualiza o tabuleiro para indicar que a posição correspondente à água foi atingida.
+
+
+
+### Arquivo Persistencia.py
+
+O arquivo Persistencia.py é responsável pelo gerenciamento do arquivo ranking.txt que armazena as melhores pontuações do jogo:
+
+1. ScoreRankear(nome, pontuacao): Carrega o ranking existente do arquivo, adiciona o novo registro, classifica o ranking por pontuação e salva o ranking atualizado no arquivo.
+
+2. exibirRanking(): Carrega o ranking do arquivo e exibe as melhores pontuações na tela, formatadas com posição, nome e pontuação.
+
+
+
+### Arquivo ranking.txt
+
+O arquivo ranking.txt é onde as melhores pontuações do jogo são armazenadas. Cada linha representa um registro no formato:
+---
+Posicao Nome         Pontuacao
+---
+
+Este arquivo é atualizado sempre que um jogador vence o jogo e é exibido quando o jogador escolhe a opção "Ver Melhores Pontuações" no menu principal.
